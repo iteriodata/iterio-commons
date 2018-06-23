@@ -2,7 +2,7 @@ import os.path
 import setuptools
 
 project_name = 'iterio-commons'
-version = '0.1.0'
+version = '0.2.0'
 
 setup_dir = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(setup_dir, 'README.rst')) as readme_file:

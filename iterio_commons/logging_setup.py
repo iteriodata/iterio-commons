@@ -22,6 +22,19 @@ def set_up_logging():
     sys.excepthook = log_uncaught_exception
 
 
+def set_up_logging_for_a_lambda():
+    """Does the same stuff as the standard ``set_up_logging``, but also removes the log handler
+    that Lambda generously gives  us, because it duplicates the log messages
+    and generally messes stuff up.
+    """
+    # Normally, in a Lambda there should be only one handler here, so it doesn't matter whether
+    # we take the one at 0 or -1, but during the pytest tests another handler is added to logging
+    # at the beginning of the list.
+    lambda_handler = logging.root.handlers[-1]
+    logging.root.removeHandler(lambda_handler)
+    set_up_logging()
+
+
 def log_uncaught_exception(exc_type, exc_value, exc_traceback):
     """Logs a nice JSON with the rendered exception info.
     """

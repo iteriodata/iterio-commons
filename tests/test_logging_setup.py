@@ -5,7 +5,8 @@ import sys
 import pytest
 import structlog
 
-from iterio_commons.logging_setup import log_uncaught_exception, set_up_logging
+from iterio_commons.logging_setup import (log_uncaught_exception, set_up_logging,
+                                          set_up_logging_for_a_lambda)
 
 
 @pytest.fixture(scope='function', autouse=True)
@@ -66,6 +67,18 @@ def test_logging_setup_with_structlog(capsys):
     assert log_entries[1]['event'] == 'error'
     assert log_entries[2]['event'] == 'exception'
     assert 'Traceback' in log_entries[2]['exception']
+    assert not err
+
+
+def test_logging_setup_for_lambda_gets_rid_of_an_additional_handler(capsys):
+    # let's simulate adding an unwanted logging handler
+    fake_lambda_handler = logging.StreamHandler(stream=sys.stdout)
+    logging.root.addHandler(fake_lambda_handler)
+    set_up_logging_for_a_lambda()
+
+    structlog.get_logger().info('Hello there')
+    out, err = capsys.readouterr()
+    assert len(out.splitlines()) == 1
     assert not err
 
 
