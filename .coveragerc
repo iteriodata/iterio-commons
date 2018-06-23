@@ -1,0 +1,7 @@
+[run]
+branch = true
+source = iterio_commons
+
+[report]
+exclude_lines = def __repr__
+fail_under = 100
